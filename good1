@@ -41,7 +41,7 @@ int measure (int num)
     digitalWrite(2 , HIGH);
     delay(5);
     digitalWrite(2 , LOW);
-    g = g + pulseIn(3 , HIGH) / 2 / 29;
+    g = g + pulseIn(3 , HIGH) / 2 / 29+3;
   }
   Serial.print(num); //just
   Serial.print(" g "); //a
