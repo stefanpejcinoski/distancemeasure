@@ -1,0 +1,123 @@
+void setup ()
+{
+  pinMode(13 , OUTPUT);
+  pinMode(11 , OUTPUT);
+  pinMode(2 , OUTPUT);
+  pinMode(3 , INPUT);
+  Serial.begin(9600);
+}
+
+void beep (int i)
+{
+  delay(1000);
+  if (i == 0)
+  {
+    digitalWrite(11 , HIGH);
+    delay(1000);
+    digitalWrite(11 , LOW);
+  }
+  else
+  {
+    for (int j = 0 ; j < i ; j++)
+    {
+
+      digitalWrite(11 , HIGH);
+      delay(350);
+      digitalWrite(11 , LOW);
+      delay(350);
+    }
+  }
+  delay(1000);
+}
+
+
+int measure (int num)
+{
+  int g = 0;
+
+  for (int i = 0 ;  i < 10 ; i++)
+  {
+    delay(100);
+    digitalWrite(2 , LOW);
+    delay(2);
+    digitalWrite(2 , HIGH);
+    delay(5);
+    digitalWrite(2 , LOW);
+    g = g + (pulseIn(3 , HIGH) / 2 / 29);
+  }
+  Serial.print(num);
+  Serial.print(" g ");
+  Serial.print(g / 10);
+  Serial.println();
+  if (g==0) {
+    digitalWrite(11, HIGH);
+    delay(3000);
+    digitalWrite(11, LOW);
+    delay(50);
+  }
+  else return g / 10;
+}
+
+void loop()
+{
+  int a = 0;
+  int b = 0;
+  int c = 0;
+  
+  for (int j = 1; j <= 3; j++)
+  {
+    digitalWrite(13 , HIGH);
+    delay(5000);
+    digitalWrite(13 , LOW);
+    delay(100);
+    digitalWrite(11, HIGH);
+    delay(100);
+    digitalWrite(11, LOW);
+    if (j == 1)
+    {
+      a = measure(j);
+      Serial.print(a);
+      Serial.println();
+    }
+    if (j == 2)
+    {
+      b = measure(j);
+      Serial.print(b);
+      Serial.println();
+    }
+
+    if (j == 3)
+    {
+      c = measure(j);
+      Serial.print(c);
+      Serial.println();
+    }
+  }
+
+  int v = a*b*c;
+  int n = 0;
+  int p = v ;
+  Serial.print(v);
+
+  while (p > 0)
+  {
+    p = p / 10;
+    n++;
+  }
+
+  int niza[n];
+
+  for (int i = 0; i < n; i++)
+  {
+    niza[i] = (v % 10);
+    v = v / 10;
+  }
+
+  for (int i = (n - 1) ; i >= 0 ; i--)
+  {
+    beep(niza[i]);
+    Serial.print(niza[i]);
+    Serial.println();
+  }
+}
+
