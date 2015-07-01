@@ -1,0 +1,111 @@
+void setup ()
+{
+  pinMode(13 , OUTPUT);
+  pinMode(11 , OUTPUT);
+  pinMode(2 , OUTPUT);
+  pinMode(3 , INPUT);
+  Serial.begin(9600);
+}
+
+void beep (int i)
+{
+  delay(1000);
+  if (i==0)
+  {
+    digitalWrite(11, HIGH);
+    delay(1000);
+    digitalWrite(11 , LOW);
+  }
+  else
+  {
+    for (int j=0 ; j<i ; j++)
+    {
+      digitalWrite(11 , HIGH);
+      delay(250);
+      digitalWrite(11 , LOW);
+      delay(400); 
+    }
+  }
+  delay(1000);
+}
+
+int measure (int num)
+{
+  int g = 0;
+
+  for (int i = 0 ;  i < 10 ; i++)
+  {
+    delay(100);
+    digitalWrite(2 , LOW);
+    delay(2);
+    digitalWrite(2 , HIGH);
+    delay(5);
+    digitalWrite(2 , LOW);
+    g = g + pulseIn(3 , HIGH) / 2 / 29;
+  }
+  Serial.print(num); //just
+  Serial.print(" g "); //a
+  Serial.print(g / 10); //debug
+  Serial.println(); //thing
+  return g / 10;
+}
+
+
+
+
+
+void loop()
+{
+  int v = 1;
+
+  for (int j = 1; j <= 3; j++)
+  {
+    //Indikacija deka pochnuva merenje:
+    digitalWrite(13, HIGH);
+    delay(3500);
+    digitalWrite(11, HIGH);
+    delay(500);
+    digitalWrite(11, LOW);
+
+    v *= measure(j);
+    Serial.print("MegjurezZaVol: ");
+    Serial.print(v);
+    Serial.println();
+
+    //Indikacija deka e zavrsheno merenjeto:
+    digitalWrite(13, LOW);
+    digitalWrite(11, HIGH);
+    delay(500);
+    digitalWrite(11, LOW);
+  }
+
+  int n = 0;
+  int p = v ;
+  while (p > 0) //necessary step za broenje # of cifri
+  {
+    p = p / 10;
+    n++;
+  }
+
+  int niza[n];
+
+  for (int i = 0; i < n; i++)
+  {
+    niza[i] = (v % 10);
+    v = v / 10;
+  }
+
+  for (int i = (n-1) ; i >= 0 ; i--)
+  {
+    if(i == 2){
+      digitalWrite(11, HIGH);
+      delay(100);
+      digitalWrite(11, LOW);
+      delay(1000);
+    }
+    beep(niza[i]);
+    Serial.print(niza[i]);
+    Serial.print("  ");
+  }
+  Serial.println();
+}
